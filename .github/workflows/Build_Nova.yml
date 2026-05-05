@@ -46,16 +46,12 @@ jobs:
       - name: Download toolchains if not cached
         if: steps.tc-cache.outputs.cache-hit != 'true'
         run: |
-          mkdir -p toolchain/gcc/linux-x86/aarch64
-          cd toolchain/gcc/linux-x86/aarch64
           echo "Downloading gcc aarch64-linux-android-4.9..."
-          git clone --depth=1 --branch master https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 aarch64-linux-android-4.9 || (echo "GCC download failed"; exit 1)
-          cd ../../../../
+          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
+          echo "Downloading clang..."
+          wget -v -O clang.tar.xz https://github.com/Neutron-Toolchains/clang-build/releases/download/19.0.0/clang-19.0.0.tar.gz || (echo "Clang download failed"; exit 1)
           mkdir -p toolchain/llvm-arm-toolchain-ship/10.0
-          cd toolchain/llvm-arm-toolchain-ship/10.0
-          echo "Downloading clang r530567..."
-          wget -v https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz -O clang.tar.xz || (echo "Clang download failed"; exit 1)
-          tar -xf clang.tar.xz --strip-components=1
+          tar -xzf clang.tar.xz -C toolchain/llvm-arm-toolchain-ship/10.0 --strip-components=1
           rm clang.tar.xz
           echo "Toolchains downloaded"
 
