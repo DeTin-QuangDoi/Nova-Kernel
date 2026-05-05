@@ -124,8 +124,7 @@ gen_anykernel() {
     )
 }
 
-git switch susfs-rio
-echo Setup RKSU+SUSFS
+echo Setup ReSukiSU+SUSFS
 rm -rf KernelSU
 rm -rf drivers/kernelsu
 curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash
