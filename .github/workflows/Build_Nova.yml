@@ -31,8 +31,22 @@ jobs:
             git curl wget jq unzip tar lz4 zip \
             bc bison flex libssl-dev libelf-dev \
             python3 python3-pip cpio rsync \
-            make gcc g++ binutils
+            make gcc g++ binutils \
+            gcc-aarch64-linux-gnu
           echo "All packages installed"
+
+      - name: Setup GCC toolchain with symlinks
+        run: |
+          mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+          cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+          for tool in gcc g++ cpp ld ar as nm objcopy objdump strip readelf; do
+            if [ -f $(which aarch64-linux-gnu-${tool} 2>/dev/null) ]; then
+              ln -sf $(which aarch64-linux-gnu-${tool}) aarch64-linux-android-${tool}
+            fi
+          done
+          cd ../../../../../../../
+          ls -la toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/
+          echo "GCC symlinks created"
 
       - name: Cache toolchains
         id: tc-cache
@@ -43,19 +57,15 @@ jobs:
           restore-keys: |
             nova-tc-clang-r530567-
 
-      - name: Download toolchains if not cached
+      - name: Download Clang toolchain
         if: steps.tc-cache.outputs.cache-hit != 'true'
         run: |
-          export GIT_TERMINAL_PROMPT=0
-          echo "Downloading GCC aarch64-linux-android-4.9..."
-          mkdir -p toolchain/gcc/linux-x86/aarch64
-          git clone --depth 1 https://github.com/mvaisakh/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
           echo "Downloading Clang 10.0..."
           mkdir -p toolchain/llvm-arm-toolchain-ship/10.0
           wget -O clang.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz || (echo "Clang download failed"; exit 1)
           tar -xf clang.tar.xz -C toolchain/llvm-arm-toolchain-ship/10.0 --strip-components=1
           rm clang.tar.xz
-          echo "Toolchains downloaded"
+          echo "Clang downloaded"
 
       - name: Verify toolchains
         run: |
