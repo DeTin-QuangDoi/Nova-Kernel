@@ -40,22 +40,12 @@ jobs:
           mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
           cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
           for tool in gcc g++ cpp ld ar as nm objcopy objdump strip readelf; do
-            if [ -f $(which aarch64-linux-gnu-${tool} 2>/dev/null) ]; then
-              ln -sf $(which aarch64-linux-gnu-${tool}) aarch64-linux-android-${tool}
+            if [ -f "$(which aarch64-linux-gnu-${tool} 2>/dev/null)" ]; then
+              ln -sf "$(which aarch64-linux-gnu-${tool})" aarch64-linux-android-${tool}
             fi
           done
           cd ../../../../../../../
-          ls -la toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/
           echo "GCC symlinks created"
-
-      - name: Cache toolchains
-        id: tc-cache
-        uses: actions/cache@v4
-        with:
-          path: toolchain
-          key: nova-tc-clang-r530567-images-v2
-          restore-keys: |
-            nova-tc-clang-r530567-
 
       - name: Download Clang toolchain
         if: steps.tc-cache.outputs.cache-hit != 'true'
