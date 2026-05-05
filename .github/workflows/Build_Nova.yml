@@ -99,19 +99,14 @@ jobs:
         if: always()
         run: |
           IMAGE="${{ steps.find-image.outputs.image_name }}"
-          DEVICE="a73xq"
-          TYPE="KSU"
-          cat >> "$GITHUB_STEP_SUMMARY" <<EOF
+          cat >> "$GITHUB_STEP_SUMMARY" <<'EOF'
 ## NovaKernel A73 Build Summary
 
-| Field     | Value |
-|-----------|-------|
-| Device    | \`$DEVICE\` |
-| Type      | **$TYPE** (ReSukiSU + Susfs 2.1.0) |
-| Debug     | ${{ github.event.inputs.debug }} |
-| Triggered | ${{ github.actor }} |
-| Commit    | \`${{ github.sha }}\` |
-
-$([ -n "$IMAGE" ] && echo "Output: \`$IMAGE\`" || echo "Build failed — no Image produced")
+**Device:** `a73xq`
+**Type:** KSU (ReSukiSU + Susfs 2.1.0)
 EOF
+          echo "**Debug:** ${{ github.event.inputs.debug }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Triggered:** ${{ github.actor }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Commit:** \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$IMAGE" ]; then echo "**Output:** \`$IMAGE\`" >> "$GITHUB_STEP_SUMMARY"; else echo "**Build failed** - no Image produced" >> "$GITHUB_STEP_SUMMARY"; fi
 
