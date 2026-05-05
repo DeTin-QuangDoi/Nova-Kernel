@@ -45,9 +45,8 @@ jobs:
 
       - name: Download toolchains if not cached
         if: steps.tc-cache.outputs.cache-hit != 'true'
-        env:
-          GIT_TERMINAL_PROMPT: 0
         run: |
+          export GIT_TERMINAL_PROMPT=0
           echo "Downloading GCC aarch64-linux-android-4.9..."
           mkdir -p toolchain/gcc/linux-x86/aarch64
           git clone --depth 1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
