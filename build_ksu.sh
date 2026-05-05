@@ -1,5 +1,6 @@
 #!/bin/env bash
 
+export DEBIAN_FRONTEND=noninteractive
 set -e
 set -o pipefail
 
@@ -8,6 +9,8 @@ AK3_REPO="https://github.com/omarsmehan1/AnyKernel3.git"
 
 install_deps() {
     echo "--- Installing Dependencies ---"
+    # Disable needrestart to avoid hanging
+    sudo apt-get remove -y needrestart || true
     sudo apt update && sudo apt install -y git aria2 device-tree-compiler lz4 xz-utils zlib1g-dev openjdk-17-jdk gcc g++ python3 python-is-python3 p7zip-full android-sdk-libsparse-utils erofs-utils \
             default-jdk gnupg flex bison gperf build-essential zip curl libc6-dev libncurses-dev libx11-dev libreadline-dev libgl1 libgl1-mesa-dev \
             make bc grep tofrodos python3-markdown libxml2-utils xsltproc libtinfo6 \
