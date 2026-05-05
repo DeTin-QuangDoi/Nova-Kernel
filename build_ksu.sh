@@ -90,10 +90,6 @@ android/abi_gki_aarch64_zebra"
     export KMI_SYMBOL_LIST_STRICT_MODE=0
     export KMI_ENFORCED=0
 
-    # Enable KSU and SUSFS
-    export CONFIG_KSU=y
-    export CONFIG_KSU_SUSFS=y
-
     echo "--------------------------------"
     echo "Target: $VARIANT (KSU Build)"
     echo "Toolchain: $(clang --version | head -n 1)"
