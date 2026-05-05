@@ -34,14 +34,29 @@ jobs:
             make gcc g++ binutils
           echo "All packages installed"
 
-      - name: Cache toolchains and stock images
+      - name: Cache toolchains
         id: tc-cache
         uses: actions/cache@v4
         with:
-          path: ~/toolchains
+          path: toolchain
           key: nova-tc-clang-r530567-images-v2
           restore-keys: |
             nova-tc-clang-r530567-
+
+      - name: Download toolchains if not cached
+        if: steps.tc-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p toolchain
+          cd toolchain
+          wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r530567.tar.gz -O clang.tar.gz
+          mkdir -p llvm-arm-toolchain-ship/10.0
+          tar -xzf clang.tar.gz -C llvm-arm-toolchain-ship/10.0 --strip-components=1
+          rm clang.tar.gz
+          wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/heads/master/all.tar.gz -O gcc.tar.gz
+          mkdir -p gcc/linux-x86/aarch64/aarch64-linux-android-4.9
+          tar -xzf gcc.tar.gz -C gcc/linux-x86/aarch64/aarch64-linux-android-4.9 --strip-components=1
+          rm gcc.tar.gz
+          echo "Toolchains downloaded"
 
       - name: Cache kernel out/
         uses: actions/cache@v4
@@ -49,13 +64,11 @@ jobs:
           path: out/
           key: "nova-kbuild-a73xq-ksu-${{ github.sha }}"
           restore-keys: |
-            "nova-kbuild-a73xq-ksu-"
+            nova-kbuild-a73xq-ksu-
 
       - name: Build kernel
         env:
-          NK_VARIANT:  a73xq
-          NK_KSU:      true
-          DEBUG:        ${{ github.event.inputs.debug }}
+          DEBUG: ${{ github.event.inputs.debug }}
         run: |
           chmod +x build_kernel.sh
           ./build_kernel.sh
