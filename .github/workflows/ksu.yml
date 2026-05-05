@@ -13,7 +13,7 @@ on:
 jobs:
   build:
     name: "${{ github.event.inputs.device }} [KSU]"
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
 
     steps:
       - name: Checkout kernel source
@@ -47,8 +47,8 @@ jobs:
 
       - name: Build kernel with KSU
         run: |
-          chmod +x build_ksu.sh
-          ./build_ksu.sh ${{ github.event.inputs.device }}
+          chmod +x build_ksu_simple.sh
+          ./build_ksu_simple.sh
         timeout-minutes: 120
 
       - name: Upload KSU ZIP
