@@ -1,25 +1,60 @@
-name: Build KSU
+name: 🚀NovaKernel KSU Build
+
 on:
   workflow_dispatch:
     inputs:
       device:
-        description: 'Device'
+        description: "Target device"
         required: true
-        default: 'a52sxq'
+        default: 'a73xq'
         type: choice
         options: [a73xq, a52sxq, m52xq]
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: "${{ github.event.inputs.device }} [KSU]"
+    runs-on: ubuntu-24.04
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout kernel source
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: |
+          submodules: true
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            git curl wget jq unzip tar lz4 zip \
+            bc bison flex libssl-dev libelf-dev \
+            python3 python3-pip cpio rsync \
+            make gcc g++ binutils \
+            gcc-aarch64-linux-gnu aria2 device-tree-compiler
+          echo "All packages installed"
+
+      - name: Setup GCC toolchain symlinks
+        run: |
+          mkdir -p toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+          cd toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin
+          for tool in gcc g++ cpp ld ar as nm objcopy objdump strip readelf; do
+            if [ -f "$(which aarch64-linux-gnu-${tool} 2>/dev/null)" ]; then
+              ln -sf "$(which aarch64-linux-gnu-${tool})" aarch64-linux-android-${tool}
+            fi
+          done
+          cd ../../../../../../../
+          echo "GCC symlinks created"
+
+      - name: Build kernel with KSU
+        run: |
           chmod +x build_ksu.sh
           ./build_ksu.sh ${{ github.event.inputs.device }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: KSU-Kernel
-          path: ~/toolchains/RIO/FINAL/*.zip
+        timeout-minutes: 120
 
+      - name: Upload KSU ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: KSU-Kernel-${{ github.event.inputs.device }}
+          path: ~/toolchains/RIO/FINAL/*.zip
+          retention-days: 5
+          compression-level: 0
