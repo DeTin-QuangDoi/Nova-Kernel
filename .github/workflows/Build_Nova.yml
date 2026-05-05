@@ -45,10 +45,12 @@ jobs:
 
       - name: Download toolchains if not cached
         if: steps.tc-cache.outputs.cache-hit != 'true'
+        env:
+          GIT_TERMINAL_PROMPT: 0
         run: |
           echo "Downloading GCC aarch64-linux-android-4.9..."
           mkdir -p toolchain/gcc/linux-x86/aarch64
-          git clone --depth 1 https://github.com/kdrag0n/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
+          git clone --depth 1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
           echo "Downloading Clang 10.0..."
           mkdir -p toolchain/llvm-arm-toolchain-ship/10.0
           wget -O clang.tar.xz https://github.com/llvm/llvm-project/releases/download/llvmorg-10.0.1/clang+llvm-10.0.1-x86_64-linux-gnu-ubuntu-16.04.tar.xz || (echo "Clang download failed"; exit 1)
