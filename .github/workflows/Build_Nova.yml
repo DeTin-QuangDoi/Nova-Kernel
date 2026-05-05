@@ -48,15 +48,22 @@ jobs:
         run: |
           mkdir -p toolchain
           cd toolchain
-          wget -q https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/master/clang-r530567.tar.gz -O clang.tar.gz
+          echo "Downloading clang r530567..."
+          wget -v https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-14.0.0_r1/clang-r530567.tar.gz -O clang.tar.gz || (echo "Clang download failed"; exit 1)
           mkdir -p llvm-arm-toolchain-ship/10.0
           tar -xzf clang.tar.gz -C llvm-arm-toolchain-ship/10.0 --strip-components=1
           rm clang.tar.gz
-          wget -q https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/heads/master/all.tar.gz -O gcc.tar.gz
+          echo "Downloading gcc aarch64 4.9..."
+          wget -v https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-14.0.0_r1/all.tar.gz -O gcc.tar.gz || (echo "GCC download failed"; exit 1)
           mkdir -p gcc/linux-x86/aarch64/aarch64-linux-android-4.9
           tar -xzf gcc.tar.gz -C gcc/linux-x86/aarch64/aarch64-linux-android-4.9 --strip-components=1
           rm gcc.tar.gz
           echo "Toolchains downloaded"
+
+      - name: Verify toolchains
+        run: |
+          ls -la toolchain/llvm-arm-toolchain-ship/10.0/bin/clang
+          ls -la toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-gcc
 
       - name: Cache kernel out/
         uses: actions/cache@v4
