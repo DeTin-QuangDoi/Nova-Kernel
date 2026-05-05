@@ -124,7 +124,7 @@ gen_anykernel() {
     )
 }
 
-git switch susfs-rio
+# git switch susfs-rio  # Branch not available
 echo Setup RKSU+SUSFS
 rm -rf KernelSU
 rm -rf drivers/kernelsu
