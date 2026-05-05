@@ -47,8 +47,8 @@ jobs:
 
       - name: Build kernel with KSU
         run: |
-          chmod +x build_ksu_simple.sh
-          ./build_ksu_simple.sh
+          chmod +x build_ksu.sh
+          ./build_ksu.sh a73xq
         timeout-minutes: 120
 
       - name: Upload KSU ZIP
