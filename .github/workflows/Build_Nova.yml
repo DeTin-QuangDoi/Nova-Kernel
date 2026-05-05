@@ -49,21 +49,21 @@ jobs:
           mkdir -p toolchain
           cd toolchain
           echo "Downloading clang r530567..."
-          wget -v https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/tags/android-14.0.0_r1/clang-r530567.tar.gz -O clang.tar.gz || (echo "Clang download failed"; exit 1)
+          wget -v https://github.com/Neutron-Toolchains/clang-build/releases/download/19.0.0/clang-19.0.0.tar.gz -O clang.tar.gz || (echo "Clang download failed"; exit 1)
           mkdir -p llvm-arm-toolchain-ship/10.0
           tar -xzf clang.tar.gz -C llvm-arm-toolchain-ship/10.0 --strip-components=1
           rm clang.tar.gz
           echo "Downloading gcc aarch64 4.9..."
-          wget -v https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/+archive/refs/tags/android-14.0.0_r1/all.tar.gz -O gcc.tar.gz || (echo "GCC download failed"; exit 1)
+          wget -v https://releases.linaro.org/components/toolchain/binaries/4.9-2016.02/aarch64-linux-gnu/gcc-linaro-4.9-2016.02-x86_64_aarch64-linux-gnu.tar.xz -O gcc.tar.xz || (echo "GCC download failed"; exit 1)
           mkdir -p gcc/linux-x86/aarch64/aarch64-linux-android-4.9
-          tar -xzf gcc.tar.gz -C gcc/linux-x86/aarch64/aarch64-linux-android-4.9 --strip-components=1
-          rm gcc.tar.gz
+          tar -xf gcc.tar.xz -C gcc/linux-x86/aarch64/aarch64-linux-android-4.9 --strip-components=1
+          rm gcc.tar.xz
           echo "Toolchains downloaded"
 
       - name: Verify toolchains
         run: |
           ls -la toolchain/llvm-arm-toolchain-ship/10.0/bin/clang
-          ls -la toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-android-gcc
+          ls -la toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9/bin/aarch64-linux-gnu-gcc
 
       - name: Cache kernel out/
         uses: actions/cache@v4
