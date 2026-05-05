@@ -128,7 +128,7 @@ git switch susfs-rio
 echo Setup RKSU+SUSFS
 rm -rf KernelSU
 rm -rf drivers/kernelsu
-curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/main/kernel/setup.sh" | bash -s susfs-rksu-master
+curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash
 install_deps
 fetch_tools
 build_kernel "$1"
