@@ -46,13 +46,16 @@ jobs:
       - name: Download toolchains if not cached
         if: steps.tc-cache.outputs.cache-hit != 'true'
         run: |
-          echo "Downloading gcc aarch64-linux-android-4.9..."
-          git clone --depth=1 https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
-          echo "Downloading clang..."
-          wget -v -O clang.tar.xz https://github.com/Neutron-Toolchains/clang-build/releases/download/19.0.0/clang-19.0.0.tar.gz || (echo "Clang download failed"; exit 1)
+          echo "Downloading GCC aarch64-linux-android-4.9..."
+          mkdir -p toolchain/gcc/linux-x86/aarch64
+          git clone --depth 1 --branch master https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 toolchain/gcc/linux-x86/aarch64/aarch64-linux-android-4.9 || (echo "GCC clone failed"; exit 1)
+          echo "Downloading Clang from Neutron..."
           mkdir -p toolchain/llvm-arm-toolchain-ship/10.0
-          tar -xzf clang.tar.xz -C toolchain/llvm-arm-toolchain-ship/10.0 --strip-components=1
-          rm clang.tar.xz
+          cd toolchain/llvm-arm-toolchain-ship/10.0
+          wget --no-check-certificate -O clang.tar.gz https://github.com/Neutron-Toolchains/clang-build/releases/download/19.0.0/clang-19.0.0.tar.gz || (echo "Clang download failed"; exit 1)
+          tar -xzf clang.tar.gz --strip-components=1
+          rm clang.tar.gz
+          cd ../../../../
           echo "Toolchains downloaded"
 
       - name: Verify toolchains
